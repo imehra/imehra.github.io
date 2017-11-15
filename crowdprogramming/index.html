@@ -18,7 +18,7 @@ var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0]]
-var gamePlay = true;
+var inGame = true;
 var total_reward = 0;
 var key_presses = 0;
 var time_spent = 0;
@@ -33,7 +33,7 @@ $(document).ready(function() {
   var reward = $("<div id='reward'>0</div>"); 
   $(document.body).append(reward);
   $(document).keydown(function(e) {
-    if (gamePlay) {
+    if (inGame) {
       if(e.keyCode==37) {
         key_presses++;
         // left arrow clicked
@@ -59,16 +59,16 @@ $(document).ready(function() {
 
       index = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
-        gamePlay = false;
+        inGame = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
-        window.alert("you lose :(")
+        window.alert("Game Lost. Refresh to Try Again.")
       }
     }
   });
   setInterval(function() {
-    if (gamePlay) {
+    if (inGame) {
       time_spent += 1000;
       total_reward += 1;
       $("#reward").html("$" + total_reward/1000);
@@ -98,11 +98,11 @@ $(document).ready(function() {
       }
       pieceIndex = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][pieceIndex] == 1 || total_reward == 2 * 10000) {
-        gamePlay = false;
+        inGame = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
-        window.alert("you lose :(")
+        window.alert("Game Lost. Refresh to Try Again.")
       }
     }
   }, 1000);
@@ -112,7 +112,6 @@ $(document).ready(function() {
 
 <style>
 #gameboard {
-  /*background-color: gray;*/
   background-image: url("background.jpg");
   width: 300px;
   height: 300px;
@@ -134,14 +133,12 @@ $(document).ready(function() {
 
 .obstacle {
   background-image: url("explode.png");
-  /*background-color: #000;*/
   width: 50px;
   height: 50px;
   position: absolute;
 }
 
 .piece {
-  /*background-color: #AAF;*/
   background-image: url("ship.png");
   width: 50px;
   height: 50px;
