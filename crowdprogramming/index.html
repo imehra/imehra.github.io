@@ -18,7 +18,7 @@ var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
-                 [0,0,0,0,0,0]]
+                 [0,0,0,0,0,0],]
 var gamePlay = true;
 var total_reward = 0;
 var key_presses = 0;
@@ -39,20 +39,20 @@ $(document).ready(function() {
         key_presses++;
         // left arrow clicked
         if (ship_location == 0) {
-        	ship_location = len - 1;
+          ship_location = len - 1;
         }
         else {
-        	ship_location -= 1;
+          ship_location -= 1;
         }
         
       } else if(e.keyCode == 39) {
         key_presses++;
       // right arrow clicked
         if (ship_location == len - 1) {
-        	ship_location = 0;
+          ship_location = 0;
         }
         else {
-        	ship_location += 1;
+          ship_location += 1;
         }
       }
       piecex = ship_location*50;
@@ -64,14 +64,15 @@ $(document).ready(function() {
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
+        $("#mturk-form").submit()
         window.alert("Game Lost. Refresh to Try Again.")
       }
     }
   });
   setInterval(function() {
     if (gamePlay) {
-      time_spent += 2000;
-      total_reward += 1;
+      time_spent += 500;
+      total_reward += 10;
       $("#reward").html("$" + total_reward/1000);
       for (i = obstacles.length-1; i > 0; i--) {
         for (j = 0; j < 6; j++) {
@@ -103,10 +104,11 @@ $(document).ready(function() {
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
+        $("#mturk-form").submit()
         window.alert("Game Lost. Refresh to Try Again.")
       }
     }
-  }, 1000);
+  }, 500);
 })
 </script>
 
@@ -121,15 +123,15 @@ $(document).ready(function() {
 }
 
 #reward {
-  border: 3px solid black;
-  width: 150px;
-  height: 50px;
+  border: 3px solid grey;
+  width: 125px;
+  height: 40px;
   position: relative;
-  left: 400px;
-  top: -250px;
+  left: 75px;
+  top: 50px;
   text-align: center;
-  font-size: 2.5em;
-  font-family: Helvetica;
+  font-size: 2em;
+  color: grey;
 }
 
 .obstacle {
