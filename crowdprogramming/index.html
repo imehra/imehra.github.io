@@ -3,8 +3,9 @@
 <head>
 <title>Project 4</title>
 <div class = "header_centered">
-Project 4 Game
+Project 4: Rocketship Game
 </div>
+<header> Use the right and left arrow keys to control the ship. Avoid the explosions and reach $2 to win! </header>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="mturk.js"></script>
 
@@ -18,7 +19,7 @@ var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0]]
-var inGame = true;
+var gamePlay = true;
 var total_reward = 0;
 var key_presses = 0;
 var time_spent = 0;
@@ -33,7 +34,7 @@ $(document).ready(function() {
   var reward = $("<div id='reward'>0</div>"); 
   $(document.body).append(reward);
   $(document).keydown(function(e) {
-    if (inGame) {
+    if (gamePlay) {
       if(e.keyCode==37) {
         key_presses++;
         // left arrow clicked
@@ -59,7 +60,7 @@ $(document).ready(function() {
 
       index = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
-        inGame = false;
+        gamePlay = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
@@ -68,7 +69,7 @@ $(document).ready(function() {
     }
   });
   setInterval(function() {
-    if (inGame) {
+    if (gamePlay) {
       time_spent += 1000;
       total_reward += 1;
       $("#reward").html("$" + total_reward/1000);
@@ -98,7 +99,7 @@ $(document).ready(function() {
       }
       pieceIndex = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][pieceIndex] == 1 || total_reward == 2 * 10000) {
-        inGame = false;
+        gamePlay = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
