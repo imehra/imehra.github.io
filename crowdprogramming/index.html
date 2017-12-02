@@ -6,25 +6,25 @@
 Project 4: Rocketship Game
 </div>
 <header> Use the right and left arrow keys to control the ship. Avoid the explosions and reach $2 to win! </header>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script src="mturk.js"></script>
 
 
 <script>
 var piecex = 150;
-var piecey = 250;
+var piecey = 250; 
+
+
 var obstacles = [[0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
                  [0,0,0,0,0,0],
-                 [0,0,0,0,0,0],]
-var gamePlay = true;
+                 [0,0,0,0,0,0]]
+var stillGoing = true;
 var total_reward = 0;
 var key_presses = 0;
 var time_spent = 0;
-var len = obstacles[0].length;
-var ship_location = len/2;
 
 $(document).ready(function() {
   var gameboard = $("<div id='gameboard'></div>");
@@ -36,45 +36,45 @@ $(document).ready(function() {
   var reward = $("<div id='reward'>0</div>"); 
   $(document.body).append(reward);
   $(document).keydown(function(e) {
-    if (gamePlay) {
+    if (stillGoing) {
       if(e.keyCode==37) {
         key_presses++;
         // left arrow clicked
-        if (ship_location == 0) {
-          ship_location = len - 1;
+        if(piecex==0) {
+          piecex = 250;
         }
         else {
-          ship_location -= 1;
+          piecex -= 50;
         }
         
       } else if(e.keyCode == 39) {
         key_presses++;
       // right arrow clicked
-        if (ship_location == len - 1) {
-          ship_location = 0;
+        if(piecex==250) {
+          piecex = 0;
         }
         else {
-          ship_location += 1;
+          piecex += 50;
         }
       }
-      piecex = ship_location*50;
       $(".piece").css("left", piecex + "px");
 
-      index = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
+
+      index = parseInt($(".globalpiece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][index] == 1) {
-        gamePlay = false;
+        stillGoing = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
-        $("#mturk-form").submit()
-        window.alert("Game Lost. Refresh to Try Again.")
+        window.alert("you lose :(")
       }
     }
   });
   setInterval(function() {
-    if (gamePlay) {
-      time_spent += 500;
-      total_reward += 10;
+    if (stillGoing) {
+      updateBoard();
+      time_spent += 1000;
+      total_reward += 1;
       $("#reward").html("$" + total_reward/1000);
       for (i = obstacles.length-1; i > 0; i--) {
         for (j = 0; j < 6; j++) {
@@ -101,17 +101,17 @@ $(document).ready(function() {
         }
       }
       globalIndex = parseInt($(".globalpiece").css("left").replace(/[^-\d\.]/g, ''))/50;
-      if (obstacles[5][pieceIndex] == 1 || total_reward == 2 * 10000) {
-        gamePlay = false;
+      if (obstacles[5][globalIndex] == 1 || total_reward == 2 * 10000) {
+        stillGoing = false;
         $("#keyPresses").val(key_presses);
         $("#timeSpent").val(time_spent);
         $("#rewardCollected").val(total_reward/1000);
-        $("#mturk-form").submit()
-        window.alert("Game Lost. Refresh to Try Again.")
+        window.alert("you lose :(")
       }
     }
   }, 500);
 })
+
 function doSomething(json) {
   var arr = []; 
   var globalx = 150;
@@ -138,7 +138,7 @@ function updateBoard() {
 
   var data = {
       key: "emem", 
-      data: JSON.stringify({localship_x: piecex, active: gamePlay})
+      data: JSON.stringify({localship_x: piecex, active: stillGoing})
   };
 
   $.ajax({
@@ -159,42 +159,44 @@ function updateBoard() {
 
 <style>
 #gameboard {
+  /*background-color: gray;*/
   background-image: url("background.jpg");
   width: 300px;
   height: 300px;
   position: relative;
-  background-repeat: repeat;
 }
 
 #reward {
-  border: 3px solid grey;
-  width: 125px;
-  height: 40px;
+  border: 3px solid black;
+  width: 150px;
+  height: 50px;
   position: relative;
-  left: 75px;
-  top: 50px;
+  left: 400px;
+  top: -250px;
   text-align: center;
-  font-size: 2em;
-  color: grey;
+  font-size: 2.5em;
+  font-family: Helvetica;
 }
 
 .obstacle {
   background-image: url("explode.png");
+  /*background-color: #000;*/
   width: 50px;
   height: 50px;
   position: absolute;
 }
 
 .piece {
-  background-image: url("ship.png");
+  background-color: #AAF;
   width: 50px;
   height: 50px;
   position: absolute;
   left: 150px;
   top: 250px;
 }
+
 .globalpiece {
-  background-image: white;
+  background-image: url("ship.png");
   width: 50px;
   height: 50px;
   position: absolute;
@@ -211,7 +213,4 @@ function updateBoard() {
 </head>
 <body>
 </body>
-<meta charset="utf-8"/>
-
-
 </html>
