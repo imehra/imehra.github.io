@@ -31,6 +31,8 @@ $(document).ready(function() {
   $(document.body).append(gameboard);
   var piece = $("<div class='piece'></div>");
   $(gameboard).append(piece);
+  var global = $("<div class='globalpiece'></div>");
+  $(gameboard).append(global);
   var reward = $("<div id='reward'>0</div>"); 
   $(document.body).append(reward);
   $(document).keydown(function(e) {
@@ -98,7 +100,7 @@ $(document).ready(function() {
           }
         }
       }
-      pieceIndex = parseInt($(".piece").css("left").replace(/[^-\d\.]/g, ''))/50;
+      globalIndex = parseInt($(".globalpiece").css("left").replace(/[^-\d\.]/g, ''))/50;
       if (obstacles[5][pieceIndex] == 1 || total_reward == 2 * 10000) {
         gamePlay = false;
         $("#keyPresses").val(key_presses);
@@ -110,6 +112,48 @@ $(document).ready(function() {
     }
   }, 500);
 })
+function doSomething(json) {
+  var arr = []; 
+  var globalx = 150;
+  var globaly = 250;
+  console.log("beep")
+  for (i = 0; i < json["count"]; i++) {
+          var data = eval(JSON.stringify(json["results"][i]["data"]));
+          var localship_x = JSON.parse(data)["localship_x"];
+          console.log(localship_x);
+          arr.push(localship_x);
+      }
+      
+      arr.sort();
+      var half = Math.floor(arr.length/2);
+      if(arr.length % 2) {
+        globalx =  arr[half];
+      } else { 
+        globalx = (arr[half-1]);
+      }
+      $(".globalpiece").css("left", globalx + "px");
+}
+
+function updateBoard() {
+
+  var data = {
+      key: "emem", 
+      data: JSON.stringify({localship_x: piecex, active: gamePlay})
+  };
+
+  $.ajax({
+    url: "http://codingthecrowd.com/counter.php", 
+
+    jsonp: "callback",
+
+    jsonpCallback: "doSomething",
+
+    dataType: "jsonp",
+
+    data: data,
+
+  });
+}
 </script>
 
 
@@ -143,6 +187,14 @@ $(document).ready(function() {
 
 .piece {
   background-image: url("ship.png");
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  left: 150px;
+  top: 250px;
+}
+.globalpiece {
+  background-image: white;
   width: 50px;
   height: 50px;
   position: absolute;
