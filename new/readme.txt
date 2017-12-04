@@ -1,0 +1,3 @@
+This site creates a game that multiple workers of a crowd can play at the same time, to reach a collective reward of $2 if it works. The link to the HIT can be found at: https://workersandbox.mturk.com/mturk/preview?groupId=3IP45TONNGWOFM1XKI2REPEULYP8IX
+
+This work was done for Crowd Computing at Carnegie Mellon University, discussed with classmate Neel Tiwary, and inspired by code from github.com/irealva/irealva.github.io/tree/master/mechanical-turk-game-group.
