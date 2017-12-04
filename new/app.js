@@ -1,4 +1,3 @@
-//Variables that can be configured
 var rows = 7;
 var columns = 6;
 var rows_to_show = 6;
@@ -402,6 +401,3 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
-
-//Source: github.com/irealva/irealva.github.io/tree/master/mechanical-turk-game-group
-//Worked with Neel Tiwary
