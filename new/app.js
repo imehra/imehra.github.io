@@ -2,14 +2,11 @@
 var rows = 7;
 var columns = 6;
 var rows_to_show = 6;
-var cell_size = 50; // in pixels
-//var max_obstacles_per_row = 3 ;
+var cell_size = 50;
 var max_obstacles_per_row = 1;
-var speed_of_game = 1000; // Time for each grid update cycle 
+var speed_of_game = 1000;
 var form_selector = "#mturk_form";
-
 var board = [];
-
 var top_row;
 var ship_location = 0;
 var gameboard;
@@ -24,14 +21,12 @@ var update_interval;
 var game_id;
 var game_mode = 'median' ;
 
-//For group play
-var group_key = "ireneAV52pnKP6KbS7"
+var group_key = "isha"
 var status = 'setup';
 
-//When player clicks start button, then begin the game
 $("#start").click(function(e) {
     $(document).keydown(function(e) {
-        if (e.keyCode == 37) { // left arrow clicked
+        if (e.keyCode == 37) { 
             move_player_left();
         } else if (e.keyCode == 39) { // right arrow clicked
             move_player_right();
@@ -45,11 +40,8 @@ $("#start").click(function(e) {
     startGame();
 });
 
-/* create_board_div()
- * Creates the DIV for the game board
- */
+
 function create_board_divs() {
-    //Create HTML board
     gameboard = $("<div id='gameboard'></div>");
     gameboard.width(columns * cell_size);
     gameboard.height(rows_to_show * cell_size);
@@ -57,9 +49,6 @@ function create_board_divs() {
     $(document.body).append(gameboard);
 }
 
-/* create_board()
- * Creates the board randomly
- */
 function create_board() {
     //Fill the board with no state 
     for (var i = 0; i < rows; i++) {
@@ -88,9 +77,7 @@ function create_board() {
     }
 }
 
-/* create_grids()
- * Create the cell grids for the gameboard
- */
+
 function create_grids() {
     for (var i = 0; i < rows_to_show; i++) {
         var row = board[i];
@@ -109,18 +96,12 @@ function create_grids() {
     }
 }
 
-/* create_counter()
- * Create the counter DIV
- */
 function create_counter() {
     counter = $("<div class='counter'>$ <span id='reward'>0.00<span></div>");
     $('body').append(counter);
     counter = $('#reward');
 }
 
-/* create_player()
- * Create the tile for the player
- */
 function create_player() {
     player = $("<div class='player'></div>");
     player.css("width", cell_size + "px");
@@ -137,9 +118,6 @@ function create_player() {
     $(gameboard).append(collective);
 }
 
-/* update_grid()
- * Update a grid using an offset based a counter
- */
 function update_grid(time) {
 
     var milliseconds = Math.floor(time % rows);
@@ -153,9 +131,9 @@ function update_grid(time) {
             var cell = $('#' + cell_name);
 
             var state = board[Math.abs(((i + offset) % rows))][j];
-            cell.css("background-color", 'none');
+            cell.css("background-image", 'url(background.jpg)');
             if (state == 1) {
-                cell.css("background-color", 'blue');
+                cell.css("background-image", 'url(explode.png)');
             }
         }
     }
@@ -163,9 +141,6 @@ function update_grid(time) {
     check_if_won_or_lost();
 }
 
-/* move_player_left()
- * Move a player one value to the left
- */
 function move_player_left() {
     var position = parseInt(player.css("left"));
     var move;
@@ -179,9 +154,6 @@ function move_player_left() {
     player.css("left", move + "px");
 }
 
-/* move_player_right()
- * Move a player one value to the left
- */
 function move_player_right() {
     var position = parseInt(player.css("left"));
     var move;
@@ -195,9 +167,7 @@ function move_player_right() {
     player.css("left", move + "px");
 }
 
-/* check_if_won_or_lost()
- * Check if player is in a winning or losing condition and submit mturk form
- */
+
 function check_if_won_or_lost() {
     var current_second = Math.floor(new Date().getTime() / 1000.0);
     var time = current_second - original_second;
@@ -207,7 +177,7 @@ function check_if_won_or_lost() {
         status = 'won';
         board = 0;
         clearInterval(update_interval);
-        alert("You or your collaborators won! The HIT will be submitted.");
+        alert("You or the crowd won! The HIT will be submitted.");
         $('#elapsedTime').attr("value", time);
         $('#reward_money').attr("value", collective_reward);
         $(form_selector).submit();
@@ -233,11 +203,8 @@ function check_if_won_or_lost() {
     }
 }
 
-//********** GROUP PLAY CODE **************//
+// GROUP PLAY //
 
-/* startGame()
- * Executes just one to see if there is an ongoing game
- */
 function startGame() {
     var data = { ship_position: 0, status: 'setup', board: 0, game_key: 0, reward: 0, mode: game_mode };
     $.ajax({
@@ -260,9 +227,6 @@ function startGame() {
     });
 }
 
-/* setup_or_create_board()
- * Function to update or create a new board
- */
 function setup_or_create_board(response) {
     var id = 0; //store game id
     var exists = false;
@@ -275,19 +239,16 @@ function setup_or_create_board(response) {
         var player_board = json.board;
         var player_mode = json.mode ;
 
-        //If another player has already setup a board then do not create one
         if (player_board != 0) {
             console.log("Board already exists");
             exists = true;
             board = player_board;
             create_board_divs();
             id = json.game_key;
-            game_mode = player_mode ; // Set game mode to what the other player already setup
+            game_mode = player_mode ; 
         }
     }
 
-    //If board does not exists after parsing through all other player states
-    //Create board and also take in a game mode
     if (exists == false) {
         create_board_divs();
         create_board();
@@ -306,9 +267,6 @@ function setup_or_create_board(response) {
     return id;
 }
 
-/* lose_or_win_condition()
- * Called once when game is own or lose
- */
 function lose_or_win_condition() {
     var position = parseInt(player.css("left")) / cell_size;
     var data = { ship_position: position, status: status, board: board, game_key: game_id, reward: reward, mode: game_mode };
@@ -331,9 +289,6 @@ function lose_or_win_condition() {
     });
 }
 
-/* udpateBoard()
- * Called every second to update the board
- */
 function updateBoard() {
     var position = parseInt(player.css("left")) / cell_size;
     var data = { ship_position: position, status: status, board: board, game_key: game_id, reward: reward, mode: game_mode };
@@ -356,11 +311,7 @@ function updateBoard() {
     });
 }
 
-/* process_group_play
- * Funciton to update the board based on scores of other players
- */
 function process_group_play(response) {
-    //Array to store the state of other players in the game
     var plays = [];
 
     var count = response.count;
@@ -368,7 +319,7 @@ function process_group_play(response) {
 
     var positions = [];
     collective_reward = 0;
-    reward = reward + 0.001;
+    reward = reward + 0.05;
 
     for (var i = 0; i < count; i++) {
         var player_state = array[i];
@@ -395,7 +346,6 @@ function process_group_play(response) {
                 console.log("Detected other player won");
                 status = 'won';
             }
-            //console.log(json) ;
         }
     }
 
@@ -411,26 +361,17 @@ function process_group_play(response) {
     update_grid(response.time);
 }
 
-/* update_collective()
- * Update position of the group player icon
- */
 function update_collective(position) {
     var move = position * cell_size;
     collective.css("left", move + "px");
 }
 
-/* randomString()
- * Used to create random game ID
- */
 function randomString(length, chars) {
     var result = '';
     for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
     return result;
 }
 
-/* median()
- * Calculates median of an array
- */
 function median(values) {
     values.sort(function(a, b) {
         return a - b; });
@@ -442,9 +383,6 @@ function median(values) {
         return (values[half - 1] + values[half]) / 2.0;
 }
 
-/* better()
- * Calculate move based on averaging the positions that all players have voted for
- */
 function better(values) {
     var total = 0 ;
     for(var i = 0; i < values.length; i++) {
@@ -455,9 +393,6 @@ function better(values) {
     return average ;
 }
 
-/* getParameterByName()
- * get URL parameter
- */
 function getParameterByName(name, url) {
     if (!url) url = window.location.href;
     name = name.replace(/[\[\]]/g, "\\$&");
@@ -467,3 +402,6 @@ function getParameterByName(name, url) {
     if (!results[2]) return '';
     return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
+
+//Source: github.com/irealva/irealva.github.io/tree/master/mechanical-turk-game-group
+//Worked with Neel Tiwary
